@@ -194,6 +194,10 @@ CRp.drawText = function( context, ele, prefix ){
     var textAngle = util.getPrefixedProperty( rscratch, 'labelAngle', prefix );
     var marginX = ele.pstyle( pdash + 'text-margin-x' ).pfValue;
     var marginY = ele.pstyle( pdash + 'text-margin-y' ).pfValue;
+    var textPaddingLeft = ele.pstyle( pdash + 'text-padding-left' ).pfValue;
+    var textPaddingRight = ele.pstyle( pdash + 'text-padding-right' ).pfValue;
+    var textPaddingBottom = ele.pstyle( pdash + 'text-padding-bottom' ).pfValue;
+    var textPaddingTop = ele.pstyle( pdash + 'text-padding-top' ).pfValue;
 
     var isEdge = ele.isEdge();
     var isNode = ele.isNode();
@@ -336,7 +340,16 @@ CRp.drawText = function( context, ele, prefix ){
     if( lineWidth > 0 ){
       context.lineWidth = lineWidth;
     }
-
+    if (halign === 'left') {
+      textX -= textPaddingRight
+    } else if (halign === 'right') {
+      textX += textPaddingLeft
+    }
+    if (valign === 'top') {
+      textY -= textPaddingBottom
+    } else if (valign === 'bottom') {
+      textY += textPaddingTop
+    }
     if( ele.pstyle( 'text-wrap' ).value === 'wrap' ){
       var lines = rscratch.labelWrapCachedLines;
       var lineHeight = textH / lines.length;
