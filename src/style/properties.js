@@ -381,7 +381,7 @@ styfn.getDefaultProperties = util.memoize( function(){
     'target-text-hide-border-left': 'no',
     'target-text-hide-border-right': 'no',
     'target-text-hide-border-top': 'no',
-    'targettarget-text-hide-border-bottom': 'no',
+    'target-text-hide-border-bottom': 'no',
     'source-label': '',
     'source-text-offset': 0,
     'source-text-margin-x': 0,
