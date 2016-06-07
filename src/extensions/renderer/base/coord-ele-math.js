@@ -1110,7 +1110,10 @@ BRp.calculateLabelDimensions = function( ele, text, extraKey ){
   ds.zIndex = '-1';
   ds.visibility = 'hidden';
   ds.pointerEvents = 'none';
-  ds.padding = '0';
+  ds.paddingLeft = ele.pstyle('text-padding-left').pfValue;
+  ds.paddingRight = ele.pstyle('text-padding-right').pfValue;
+  ds.paddingTop = ele.pstyle('text-padding-top').pfValue;
+  ds.paddingBottom = ele.pstyle('text-padding-bottom').pfValue;
   ds.lineHeight = '1';
 
   if( ele.pstyle( 'text-wrap' ).value === 'wrap' ){
