@@ -171,7 +171,31 @@ function roundRect( ctx, x, y, width, height, radius ){
   ctx.closePath();
   ctx.fill();
 }
+const drawCustomBorder = function(context,  bgX, bgY, bgWidth, bgHeight, hideLeft, hideRight, hideTop, hideBottom) {
+  if (!hideLeft && !hideRight && !hideTop && !hideBottom) {
+    context.strokeRect( bgX, bgY, bgWidth, bgHeight );
+  } else {
+    context.beginPath();
+    if (!hideTop) {
+      context.moveTo(bgX,bgY);
+      context.lineTo(bgX+bgWidth, bgY);
+    }
+    if (!hideRight) {
+      context.moveTo(bgX+bgWidth, bgY);
+      context.lineTo(bgX+bgWidth, bgY+bgHeight);
+    }
+    if (!hideBottom) {
+      context.moveTo(bgX+bgWidth, bgY+bgHeight);
+      context.lineTo(bgX, bgY+bgHeight);
+    }
+    if (!hideLeft) {
+      context.moveTo(bgX,bgY);
+      context.lineTo(bgX, bgY+bgHeight);
+    }
+    context.stroke();
+  }
 
+}
 // Draw text
 CRp.drawText = function( context, ele, prefix ){
   var _p = ele._private;
@@ -194,6 +218,10 @@ CRp.drawText = function( context, ele, prefix ){
     var textAngle = util.getPrefixedProperty( rscratch, 'labelAngle', prefix );
     var marginX = ele.pstyle( pdash + 'text-margin-x' ).pfValue;
     var marginY = ele.pstyle( pdash + 'text-margin-y' ).pfValue;
+    var textPaddingLeft = ele.pstyle( pdash + 'text-padding-left' ).pfValue;
+    var textPaddingRight = ele.pstyle( pdash + 'text-padding-right' ).pfValue;
+    var textPaddingBottom = ele.pstyle( pdash + 'text-padding-bottom' ).pfValue;
+    var textPaddingTop = ele.pstyle( pdash + 'text-padding-top' ).pfValue;
 
     var isEdge = ele.isEdge();
     var isNode = ele.isNode();
@@ -314,12 +342,15 @@ CRp.drawText = function( context, ele, prefix ){
           }
         }
 
-        context.strokeRect( bgX, bgY, bgWidth, bgHeight );
+        var hideLeft = ele.pstyle( pdash + 'text-hide-border-left' ).strValue === 'yes'
+        var hideRight = ele.pstyle( pdash + 'text-hide-border-right' ).strValue === 'yes'
+        var hideTop = ele.pstyle( pdash + 'text-hide-border-top' ).strValue === 'yes'
+        var hideBottom = ele.pstyle( pdash + 'text-hide-border-bottom' ).strValue === 'yes'
+        drawCustomBorder(context, bgX, bgY, bgWidth, bgHeight, hideLeft, hideRight, hideTop, hideBottom)
 
         if( textBorderStyle === 'double' ){
           var whiteWidth = textBorderWidth / 2;
-
-          context.strokeRect( bgX + whiteWidth, bgY + whiteWidth, bgWidth - whiteWidth * 2, bgHeight - whiteWidth * 2 );
+          drawCustomBorder(context, bgX + whiteWidth, bgY + whiteWidth, bgWidth - whiteWidth * 2, bgHeight - whiteWidth * 2, hideLeft, hideRight, hideTop, hideBottom)
         }
 
         if( context.setLineDash ){ // for very outofdate browsers
@@ -336,7 +367,16 @@ CRp.drawText = function( context, ele, prefix ){
     if( lineWidth > 0 ){
       context.lineWidth = lineWidth;
     }
-
+    if (halign === 'left') {
+      textX -= textPaddingRight
+    } else if (halign === 'right') {
+      textX += textPaddingLeft
+    }
+    if (valign === 'top') {
+      textY -= textPaddingBottom
+    } else if (valign === 'bottom') {
+      textY += textPaddingTop
+    }
     if( ele.pstyle( 'text-wrap' ).value === 'wrap' ){
       var lines = rscratch.labelWrapCachedLines;
       var lineHeight = textH / lines.length;
